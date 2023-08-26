@@ -16,11 +16,18 @@ public class API {
       try {
 
          //System.out.println(fetchURL("https://api.github.com/rate_limit")); // in case you need to check your rate limit
+
+         //The argument passed to this program, from the build.gradle file, is professor Gary's public GitHub repositories.
          String user = args[0];
+
+         //concatenating the URL using the command line arguments
          String json = fetchURL("https://api.github.com/users/" + user + "/repos"); // fetching the JSON reply
-         System.out.println(json); // printing it so you see how it looks like 
+         System.out.println(json); // printing it so you see how it looks like
+
+
          
-         // saving it as JSON array (if it sere not an array it woudl need to be a JSONObject)
+         // saving it as JSON array (if it were not an array it would need to be a JSONObject)
+         //An JSON array is created from the String we fetched in the first statement of this file
          JSONArray repoArray = new JSONArray(json);
 
          // new JSON which we want to save later on
@@ -71,9 +78,10 @@ public class API {
             newjSON.put(newRepo);
          }
 
-         // save shortened info into file
+         // save shortened info into file; this will be saved to the project directory
          PrintWriter out = new PrintWriter("repoShort.json");
          out.println(newjSON.toString());
+         //Always remember to close your resources or else the text will not be printed to the file you want to generate.
          out.close();
 
 
@@ -87,8 +95,13 @@ public class API {
    /**
     *
     * a method to make a web request. Note that this method will block execution
-    * for up to 20 seconds while the request is being satisfied. Better to use a
-    * non-blocking request.
+    * for up to 20 seconds while the request is being satisfied.
+    *
+    * Better to use a non-blocking request.
+    * Look up what a non-blocking request is later...
+    *
+    * This method is called at the very start of the program and in the for-loop to get all the branches for all of the
+    * public repositories in this GitHub user account.
     * 
     * @param aUrl the String indicating the query url for the OMDb api search
     * @return the String result of the http request.
