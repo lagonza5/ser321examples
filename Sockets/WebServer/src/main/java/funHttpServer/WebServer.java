@@ -25,6 +25,8 @@ import java.util.Random;
 import java.util.Map;
 import java.util.LinkedHashMap;
 import java.nio.charset.Charset;
+//adding a new import, gradle.build has a json dependency
+import org.json.*;
 
 class WebServer {
   public static void main(String args[]) {
