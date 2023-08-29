@@ -228,10 +228,53 @@ class WebServer {
 
           // extract path parameters
           query_pairs = splitQuery(request.replace("multiply?", ""));
-          // example return -> {{"num1", "1"}, {"num2","2"}}
+          // example return -> {{"num1", "1"}, {"num2","2"}} if they are provided of course...
 
-          Integer num1 = parseIntOrDefault(query_pairs.get("num1"), 0);
-          Integer num2 = parseIntOrDefault(query_pairs.get("num2"), 0);
+          //Check if the LinkedHashMap was able to extract the parameters
+          boolean num1Status = query_pairs.containsKey("num1");
+          boolean num2Status = query_pairs.containsKey("num2");
+
+          //The values that will be multiplied
+          Integer num1;
+          Integer num2;
+
+          /*
+          Possibilities
+          Both parameters provided correctly
+          Only one parameter provided correctly (could be either one)
+          Neither parameter provided
+          Query syntax did not make sense
+           */
+
+          //when both parameters are provided by user
+          /*
+          if (num1Status && num2Status) {
+            num1 = parseIntOrDefault(query_pairs.get("num1"), 0);
+            num2 = parseIntOrDefault(query_pairs.get("num2"), 0);
+
+            // do math
+            Integer result = num1 * num2;
+
+            // Generate response
+            builder.append("HTTP/1.1 200 OK\n");
+            builder.append("Content-Type: text/html; charset=utf-8\n");
+            builder.append("\n");
+            builder.append("Result is: " + result);
+          }
+          */
+
+
+          //if the user does not provide a query that includes either parameter, the LinkedHashMap will be empty
+          if (query_pairs.isEmpty()) { //both parameters missing
+            num1 = parseIntOrDefault(query_pairs.get("num1"), 0);
+            num2 = parseIntOrDefault(query_pairs.get("num2"), 0);
+
+            builder.append("HTTP/1.1 488 Missing Both Parameters\n");
+            builder.append("Content-Type: text/html; charset=utf-8\n");
+            builder.append("\n");
+            builder.append("Result (using default values) is: " + (num1 * num2));
+            builder.append("Try using some parameters next time.\n" );
+          }
 
 
           // extract required fields from parameters
@@ -239,13 +282,16 @@ class WebServer {
           //Integer num2 = Integer.parseInt(query_pairs.get("num2"));
 
           // do math
-          Integer result = num1 * num2;
+          //Integer result = num1 * num2;
 
           // Generate response
+          /*
           builder.append("HTTP/1.1 200 OK\n");
           builder.append("Content-Type: text/html; charset=utf-8\n");
           builder.append("\n");
           builder.append("Result is: " + result);
+
+           */
 
           // TODO: Include error handling here with a correct error code and
           // a response that makes sense
