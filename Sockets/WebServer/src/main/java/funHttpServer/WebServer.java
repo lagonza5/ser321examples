@@ -230,13 +230,13 @@ class WebServer {
           query_pairs = splitQuery(request.replace("multiply?", ""));
           // example return -> {{"num1", "1"}, {"num2","2"}}
 
-          Integer num11;
-          Integer num22;
+          Integer num1 = parseIntOrDefault(query_pairs.get("num1"), 0);
+          Integer num2 = parseIntOrDefault(query_pairs.get("num2"), 0);
 
 
           // extract required fields from parameters
-          Integer num1 = Integer.parseInt(query_pairs.get("num1"));
-          Integer num2 = Integer.parseInt(query_pairs.get("num2"));
+          //Integer num1 = Integer.parseInt(query_pairs.get("num1"));
+          //Integer num2 = Integer.parseInt(query_pairs.get("num2"));
 
           // do math
           Integer result = num1 * num2;
@@ -300,7 +300,7 @@ class WebServer {
    * defaultVal -> only when the user does not provide a value
    *
    */
-  public static int parseIntOrDefault (String number, int defaultVal) {
+  public static Integer parseIntOrDefault (String number, int defaultVal) {
     try {
       return Integer.parseInt(number);
     } catch (NumberFormatException nfe) {
