@@ -30,7 +30,9 @@ import org.json.*;
 
 class WebServer {
   public static void main(String args[]) {
+
     WebServer server = new WebServer(9000);
+
   }
 
   /**
@@ -120,12 +122,26 @@ class WebServer {
           // extract the request, basically everything after the GET up to HTTP/1.1
           request = line.substring(firstSpace + 2, secondSpace);
         }
-
       }
       System.out.println("FINISHED PARSING HEADER\n");
 
+      /*
+      The order of the if-else statments that follow
+
+      NULL request
+      empty request (root page)
+      /json request
+      /random request
+      /file/ request
+      /multiply? request
+      /github? request
+      BAD request
+
+       */
+
       // Generate an appropriate response to the user
       if (request == null) {
+        //The method getBytes() encodes a String into a byte array using the platform's default charset if no argument is passed.
         response = "<html>Illegal request: no GET</html>".getBytes();
       } else {
         // create output buffer
@@ -139,8 +155,13 @@ class WebServer {
           String page = new String(readFileInBytes(new File("www/root.html")));
           // performs a template replacement in the page
           page = page.replace("${links}", buildFileList());
+          //The replace() method searches a string for a value or a regular expression.
+          // The replace() method returns a new string with the value(s) replaced.
+          //buildFileList() returns a String of HTML that will contain the proper HTML tags/links with the filenames
+          // in the right space for the root page of the website (when no GET request is made)
 
-          // Generate response
+
+          // Generate response (Response, content type, then the String of HTML (directory of web page?)
           builder.append("HTTP/1.1 200 OK\n");
           builder.append("Content-Type: text/html; charset=utf-8\n");
           builder.append("\n");
@@ -237,8 +258,7 @@ class WebServer {
           builder.append("Content-Type: text/html; charset=utf-8\n");
           builder.append("\n");
           builder.append("Check the todos mentioned in the Java source file");
-          // TODO: Parse the JSON returned by your fetch and create an appropriate
-          // response based on what the assignment document asks for
+          // TODO: Parse the JSON returned by your fetch and create an appropriatE response based on what the assignment document asks for
 
         } else {
           // if the request is not recognized at all
@@ -254,6 +274,8 @@ class WebServer {
       }
     } catch (IOException e) {
       e.printStackTrace();
+      //TODO Are we supposed to print more than the exception stack trace?
+      //My own addition ^
       response = ("<html>ERROR: " + e.getMessage() + "</html>").getBytes();
     }
 
@@ -285,14 +307,21 @@ class WebServer {
    * @return HTML string output of file list
    */
   public static String buildFileList() {
+
+    //An array list that will contain all the files in a directory
     ArrayList<String> filenames = new ArrayList<>();
 
-    // Creating a File object for directory
+    // Creating a File object for directory start (project level)
     File directoryPath = new File("www/");
+
+    //io.File.list() returns the array of files and directories in the directory defined by this abstract path name.
+    //That array of files and directories is added to the array list
     filenames.addAll(Arrays.asList(directoryPath.list()));
 
+    //Create String of HTML that will contain the proper HTML tags/links with the filenames in the right space
     if (filenames.size() > 0) {
       StringBuilder builder = new StringBuilder();
+      //The <ul> tag defines an unordered (bulleted) list. Use the <ul> tag together with the <li> tag to create unordered lists.
       builder.append("<ul>\n");
       for (var filename : filenames) {
         builder.append("<li>" + filename + "</li>");
@@ -309,22 +338,35 @@ class WebServer {
    * of 512 bytes for efficiency.
    */
   public static byte[] readFileInBytes(File f) throws IOException {
-
+    //file (FileInputStream) -> buffer -> data (ByteArrayOutputStream) -> result
     FileInputStream file = new FileInputStream(f);
     ByteArrayOutputStream data = new ByteArrayOutputStream(file.available());
 
     byte buffer[] = new byte[512];
-    int numRead = file.read(buffer);
-    while (numRead > 0) {
-      data.write(buffer, 0, numRead);
-      numRead = file.read(buffer);
-    }
-    file.close();
 
+    //The 'buffer' will read up to its own size (512 in this code) from the input stream (a file in this case), and
+    // return the length of the bytes read from the file (could be full or partially full).
+    int numRead = file.read(buffer);
+    //file (FileInputStream) -> buffer, save how much was transferred in an int variable
+
+    //confirm your buffer contains bytes that were just read from the file
+    while (numRead > 0) {
+
+      data.write(buffer, 0, numRead);
+      //buffer -> data (ByteArrayOutputStream)
+
+      //read the next 512 bytes from the file (FileInputStream); equivalent to the increment step for a while-loop
+      numRead = file.read(buffer);
+      //file (FileInputStream) -> buffer, save how much was transferred in an int variable
+    }
+    file.close(); //always close the file input stream at end of file
+
+    //convert the output stream of bytes into an array of bytes
     byte[] result = data.toByteArray();
     data.close();
+    //always close the data output stream (from buffer of bytes) once the array of bytes is created
 
-    return result;
+    return result; //return the array of bytes
   }
 
   /**
