@@ -129,13 +129,13 @@ class WebServer {
       The order of the if-else statments that follow
 
       NULL request
-      empty request (root page)
-      /json request
-      /random request
-      /file/ request
-      /multiply? request
-      /github? request
-      BAD request
+          root page request (with requests explanation)
+          /json request
+          /random request
+          /file/ request
+          /multiply? request
+          /github? request
+          BAD request
 
        */
 
@@ -170,7 +170,7 @@ class WebServer {
         } else if (request.equalsIgnoreCase("json")) {
           // shows the JSON of a random image and sets the header name for that image
 
-          // pick a index from the map
+          // pick an index from the map
           int index = random.nextInt(_images.size());
 
           // pull out the information
