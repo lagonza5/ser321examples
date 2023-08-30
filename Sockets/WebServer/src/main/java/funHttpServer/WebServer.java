@@ -272,8 +272,8 @@ class WebServer {
             builder.append("HTTP/1.1 488 Missing Both Parameters\n");
             builder.append("Content-Type: text/html; charset=utf-8\n");
             builder.append("\n");
-            builder.append("<br>Result (using default values) is: " + (num1 * num2) + "</br>");
-            builder.append("Try using some parameters next time.\n" );
+            builder.append("Result (using default values) is: " + (num1 * num2) + "<br />");
+            builder.append("Try using some parameters next time.<br />" );
           }
 
 
