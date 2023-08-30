@@ -323,13 +323,11 @@ class WebServer {
           String format;
 
           if (query_pairs.isEmpty()) {
-            decimalVal = parseIntOrDefault(query_pairs.get("decimal"), DEFAULT_VAL_0);
-            //format = parseNumberSystem(query_pairs.get("format"));
 
             builder.append("HTTP/1.1 488 Missing Both Parameters\n");
             builder.append("Content-Type: text/html; charset=utf-8\n");
             builder.append("\n");
-            builder.append("Result (using both default values) is: " + Integer.toBinaryString(decimalVal) + "\n");
+            builder.append("Result (using both default values) is: " + Integer.toBinaryString(DEFAULT_VAL_0) + "\n");
           } else if (decimalStatus || formatStatus) {
             String conversion;
 
