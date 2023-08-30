@@ -306,6 +306,51 @@ class WebServer {
           builder.append("Check the todos mentioned in the Java source file");
           // TODO: Parse the JSON returned by your fetch and create an appropriatE response based on what the assignment document asks for
 
+        } else if (request.contains("convertTo?")) {
+
+          Map<String, String> query_pairs = new LinkedHashMap<String, String>();
+          final int DEFAULT_VAL_0 = 0;
+
+          // extract path parameters
+          query_pairs = splitQuery(request.replace("convertTo?", ""));
+          // example return -> {{"decimal", "1"}, {"format","x"}} if they are provided of course...
+
+          //Check if the LinkedHashMap was able to extract the parameters
+          boolean decimalStatus = query_pairs.containsKey("decimal");
+          boolean formatStatus = query_pairs.containsKey("format");
+
+          Integer decimalVal;
+          String format;
+
+          if (query_pairs.isEmpty()) {
+            decimalVal = parseIntOrDefault(query_pairs.get("decimal"), DEFAULT_VAL_0);
+            //format = parseNumberSystem(query_pairs.get("format"));
+
+            builder.append("HTTP/1.1 488 Missing Both Parameters\n");
+            builder.append("Content-Type: text/html; charset=utf-8\n");
+            builder.append("\n");
+            builder.append("Result (using both default values) is: " + Integer.toBinaryString(decimalVal) + "\n");
+          } else if (decimalStatus || formatStatus) {
+            String conversion;
+
+            decimalVal = parseIntOrDefault(query_pairs.get("decimal"), DEFAULT_VAL_0);
+            format = parseNumberSystem(query_pairs.get("format"));
+
+            builder.append("HTTP/1.1 200 OK\n");
+            builder.append("Content-Type: text/html; charset=utf-8\n");
+            builder.append("\n");
+
+            if (format.equals("b")) {
+              conversion = Integer.toBinaryString(decimalVal);
+              builder.append("Result (in binary): " + conversion);
+            } else if (format.equals("x")) {
+              conversion = Integer.toHexString(decimalVal);
+              builder.append("Result (in hexadecimal): " + conversion);
+            } else if (format.equals("o")) {
+              conversion = Integer.toOctalString(decimalVal);
+              builder.append("Result (in octal): " + conversion);
+            }
+          }
         } else {
           // if the request is not recognized at all
 
@@ -326,6 +371,22 @@ class WebServer {
     }
 
     return response;
+  }
+
+  /**
+   * Method to read in a String the represents binary, hex, or octal
+   */
+  public static String parseNumberSystem (String numberSystem) {
+
+    if (numberSystem.equals("b") || numberSystem.equals("B")) {
+      return "b";
+    } else if (numberSystem.equals("x") || numberSystem.equals("X")) {
+      return "x";
+    } else if (numberSystem.equals("o") || numberSystem.equals("O")) {
+      return "o";
+    }
+
+    return "b";
   }
 
   /**
