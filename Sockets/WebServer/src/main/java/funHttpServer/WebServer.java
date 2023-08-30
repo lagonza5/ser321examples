@@ -225,6 +225,7 @@ class WebServer {
           // wrong data is given this just crashes
 
           Map<String, String> query_pairs = new LinkedHashMap<String, String>();
+          final int DEFAULT_VALUE = 1;
 
           // extract path parameters
           query_pairs = splitQuery(request.replace("multiply?", ""));
@@ -249,16 +250,16 @@ class WebServer {
 
           //if the user does not provide a query that includes either parameter, the LinkedHashMap will be empty
           if (query_pairs.isEmpty()) { //both parameters missing
-            num1 = parseIntOrDefault(query_pairs.get("num1"), 0);
-            num2 = parseIntOrDefault(query_pairs.get("num2"), 0);
+            num1 = parseIntOrDefault(query_pairs.get("num1"), DEFAULT_VALUE);
+            num2 = parseIntOrDefault(query_pairs.get("num2"), DEFAULT_VALUE);
 
             builder.append("HTTP/1.1 488 Missing Both Parameters\n");
             builder.append("Content-Type: text/html; charset=utf-8\n");
             builder.append("\n");
             builder.append("Result (using both default values) is: " + (num1 * num2) + "\n");
           } else if (num1Status && num2Status) {
-            num1 = parseIntOrDefault(query_pairs.get("num1"), 0);
-            num2 = parseIntOrDefault(query_pairs.get("num2"), 0);
+            num1 = parseIntOrDefault(query_pairs.get("num1"), DEFAULT_VALUE);
+            num2 = parseIntOrDefault(query_pairs.get("num2"), DEFAULT_VALUE);
 
             // do math
             Integer result = num1 * num2;
@@ -269,17 +270,17 @@ class WebServer {
             builder.append("\n");
             builder.append("Result is: " + result);
           } else if (num1Status || num2Status) {
-            num1 = parseIntOrDefault(query_pairs.get("num1"), 0);
-            num2 = parseIntOrDefault(query_pairs.get("num2"), 0);
+            num1 = parseIntOrDefault(query_pairs.get("num1"), DEFAULT_VALUE);
+            num2 = parseIntOrDefault(query_pairs.get("num2"), DEFAULT_VALUE);
 
             // do math
             Integer result = num1 * num2;
 
             // Generate response
-            builder.append("HTTP/1.1 200 OK\n");
+            builder.append("HTTP/1.1 489 Missing One Parameter\n");
             builder.append("Content-Type: text/html; charset=utf-8\n");
             builder.append("\n");
-            builder.append("Result is: " + result);
+            builder.append("Result (with one parameter) is: " + result);
           }
 
           // TODO: Include error handling here with a correct error code and
