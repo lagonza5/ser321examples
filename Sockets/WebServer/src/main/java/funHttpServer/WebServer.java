@@ -246,23 +246,6 @@ class WebServer {
           Query syntax did not make sense
            */
 
-          //when both parameters are provided by user
-          /*
-          if (num1Status && num2Status) {
-            num1 = parseIntOrDefault(query_pairs.get("num1"), 0);
-            num2 = parseIntOrDefault(query_pairs.get("num2"), 0);
-
-            // do math
-            Integer result = num1 * num2;
-
-            // Generate response
-            builder.append("HTTP/1.1 200 OK\n");
-            builder.append("Content-Type: text/html; charset=utf-8\n");
-            builder.append("\n");
-            builder.append("Result is: " + result);
-          }
-          */
-
 
           //if the user does not provide a query that includes either parameter, the LinkedHashMap will be empty
           if (query_pairs.isEmpty()) { //both parameters missing
@@ -285,27 +268,22 @@ class WebServer {
             builder.append("Content-Type: text/html; charset=utf-8\n");
             builder.append("\n");
             builder.append("Result is: " + result);
+          } else if (num1Status || num2Status) {
+            num1 = parseIntOrDefault(query_pairs.get("num1"), 0);
+            num2 = parseIntOrDefault(query_pairs.get("num2"), 0);
+
+            // do math
+            Integer result = num1 * num2;
+
+            // Generate response
+            builder.append("HTTP/1.1 200 OK\n");
+            builder.append("Content-Type: text/html; charset=utf-8\n");
+            builder.append("\n");
+            builder.append("Result is: " + result);
           }
 
-
-          // extract required fields from parameters
-          //Integer num1 = Integer.parseInt(query_pairs.get("num1"));
-          //Integer num2 = Integer.parseInt(query_pairs.get("num2"));
-
-          // do math
-          //Integer result = num1 * num2;
-
-          // Generate response
-          /*
-          builder.append("HTTP/1.1 200 OK\n");
-          builder.append("Content-Type: text/html; charset=utf-8\n");
-          builder.append("\n");
-          builder.append("Result is: " + result);
-
-           */
-
           // TODO: Include error handling here with a correct error code and
-          // a response that makes sense
+
 
         } else if (request.contains("github?")) {
           // pulls the query from the request and runs it with GitHub's REST API
