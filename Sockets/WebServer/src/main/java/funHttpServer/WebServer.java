@@ -25,10 +25,14 @@ import java.util.Random;
 import java.util.Map;
 import java.util.LinkedHashMap;
 import java.nio.charset.Charset;
+//adding a new import, gradle.build has a json dependency
+import org.json.*;
 
 class WebServer {
   public static void main(String args[]) {
+
     WebServer server = new WebServer(9000);
+
   }
 
   /**
@@ -118,12 +122,26 @@ class WebServer {
           // extract the request, basically everything after the GET up to HTTP/1.1
           request = line.substring(firstSpace + 2, secondSpace);
         }
-
       }
       System.out.println("FINISHED PARSING HEADER\n");
 
+      /*
+      The order of the if-else statments that follow
+
+      NULL request
+          root page request (with requests explanation)
+          /json request
+          /random request
+          /file/ request
+          /multiply? request
+          /github? request
+          BAD request
+
+       */
+
       // Generate an appropriate response to the user
       if (request == null) {
+        //The method getBytes() encodes a String into a byte array using the platform's default charset if no argument is passed.
         response = "<html>Illegal request: no GET</html>".getBytes();
       } else {
         // create output buffer
@@ -135,10 +153,19 @@ class WebServer {
 
           // opens the root.html file
           String page = new String(readFileInBytes(new File("www/root.html")));
+          //converts the file into HTML so later it can be displayed on the page
+
           // performs a template replacement in the page
+          //The replace() method searches the HTML stored in 'page' for '${links}' and replaced it with files found at www directory
           page = page.replace("${links}", buildFileList());
 
-          // Generate response
+
+          // The replace() method returns a new string with the value(s)/target '${links}' replaced with the files returned by buildFileList() method
+          //buildFileList() returns a String of HTML that will contain the proper HTML tags/links with the filenames
+          // in the right space for the root page of the website (when no GET request is made)
+
+
+          // Generate response (Response, content type, then the String of HTML (directory of web page?)
           builder.append("HTTP/1.1 200 OK\n");
           builder.append("Content-Type: text/html; charset=utf-8\n");
           builder.append("\n");
@@ -147,7 +174,7 @@ class WebServer {
         } else if (request.equalsIgnoreCase("json")) {
           // shows the JSON of a random image and sets the header name for that image
 
-          // pick a index from the map
+          // pick an index from the map
           int index = random.nextInt(_images.size());
 
           // pull out the information
@@ -198,24 +225,66 @@ class WebServer {
           // wrong data is given this just crashes
 
           Map<String, String> query_pairs = new LinkedHashMap<String, String>();
+          final int DEFAULT_VALUE = 1;
+
           // extract path parameters
           query_pairs = splitQuery(request.replace("multiply?", ""));
+          // example return -> {{"num1", "1"}, {"num2","2"}} if they are provided of course...
 
-          // extract required fields from parameters
-          Integer num1 = Integer.parseInt(query_pairs.get("num1"));
-          Integer num2 = Integer.parseInt(query_pairs.get("num2"));
+          //Check if the LinkedHashMap was able to extract the parameters
+          boolean num1Status = query_pairs.containsKey("num1");
+          boolean num2Status = query_pairs.containsKey("num2");
 
-          // do math
-          Integer result = num1 * num2;
+          //The values that will be multiplied
+          Integer num1;
+          Integer num2;
 
-          // Generate response
-          builder.append("HTTP/1.1 200 OK\n");
-          builder.append("Content-Type: text/html; charset=utf-8\n");
-          builder.append("\n");
-          builder.append("Result is: " + result);
+          /*
+          Possibilities
+          Both parameters provided correctly
+          Only one parameter provided correctly (could be either one)
+          Neither parameter provided
+          Query syntax did not make sense
+           */
+
+
+          //if the user does not provide a query that includes either parameter, the LinkedHashMap will be empty
+          if (query_pairs.isEmpty()) { //both parameters missing
+            num1 = parseIntOrDefault(query_pairs.get("num1"), DEFAULT_VALUE);
+            num2 = parseIntOrDefault(query_pairs.get("num2"), DEFAULT_VALUE);
+
+            builder.append("HTTP/1.1 488 Missing Both Parameters\n");
+            builder.append("Content-Type: text/html; charset=utf-8\n");
+            builder.append("\n");
+            builder.append("Result (using both default values) is: " + (num1 * num2) + "\n");
+          } else if (num1Status && num2Status) {
+            num1 = parseIntOrDefault(query_pairs.get("num1"), DEFAULT_VALUE);
+            num2 = parseIntOrDefault(query_pairs.get("num2"), DEFAULT_VALUE);
+
+            // do math
+            Integer result = num1 * num2;
+
+            // Generate response
+            builder.append("HTTP/1.1 200 OK\n");
+            builder.append("Content-Type: text/html; charset=utf-8\n");
+            builder.append("\n");
+            builder.append("Result is: " + result);
+          } else if (num1Status || num2Status) {
+            num1 = parseIntOrDefault(query_pairs.get("num1"), DEFAULT_VALUE);
+            num2 = parseIntOrDefault(query_pairs.get("num2"), DEFAULT_VALUE);
+
+            // do math
+            Integer result = num1 * num2;
+
+            // Generate response
+            builder.append("HTTP/1.1 489 Missing One Parameter\n");
+            builder.append("Content-Type: text/html; charset=utf-8\n");
+            builder.append("\n");
+            builder.append("Result (with one parameter) is: " + result);
+          }
 
           // TODO: Include error handling here with a correct error code and
-          // a response that makes sense
+
 
         } else if (request.contains("github?")) {
           // pulls the query from the request and runs it with GitHub's REST API
@@ -235,8 +304,7 @@ class WebServer {
           builder.append("Content-Type: text/html; charset=utf-8\n");
           builder.append("\n");
           builder.append("Check the todos mentioned in the Java source file");
-          // TODO: Parse the JSON returned by your fetch and create an appropriate
-          // response based on what the assignment document asks for
+          // TODO: Parse the JSON returned by your fetch and create an appropriatE response based on what the assignment document asks for
 
         } else {
           // if the request is not recognized at all
@@ -252,10 +320,28 @@ class WebServer {
       }
     } catch (IOException e) {
       e.printStackTrace();
+      //TODO Are we supposed to print more than the exception stack trace?
+      //My own addition ^
       response = ("<html>ERROR: " + e.getMessage() + "</html>").getBytes();
     }
 
     return response;
+  }
+
+  /**
+   * Method to read in an integer value
+   * @param number (initially in String format) from the LinkedHashMap generated by the splitQuery() method
+   * @return
+   * int -> when the user provides an actual integer
+   * defaultVal -> only when the user does not provide a value
+   *
+   */
+  public static Integer parseIntOrDefault (String number, int defaultVal) {
+    try {
+      return Integer.parseInt(number);
+    } catch (NumberFormatException nfe) {
+      return defaultVal;
+    }
   }
 
   /**
@@ -266,13 +352,20 @@ class WebServer {
    */
   public static Map<String, String> splitQuery(String query) throws UnsupportedEncodingException {
     Map<String, String> query_pairs = new LinkedHashMap<String, String>();
+
+    if (query == null || query == "") {
+      return query_pairs;
+    }
+
     // "q=hello+world%2Fme&bob=5"
     String[] pairs = query.split("&");
     // ["q=hello+world%2Fme", "bob=5"]
     for (String pair : pairs) {
       int idx = pair.indexOf("=");
-      query_pairs.put(URLDecoder.decode(pair.substring(0, idx), "UTF-8"),
-          URLDecoder.decode(pair.substring(idx + 1), "UTF-8"));
+      //URLDecoder.decode() processes the URL query and replaces (plus signs, percent signs, etc) with proper whitespace in ASCII
+      query_pairs.put( (URLDecoder.decode(pair.substring(0, idx), "UTF-8")), (URLDecoder.decode(pair.substring(idx + 1), "UTF-8")) );
+      // key: (parameter name of query as String) , value: (variable String representation of integer value)
+      // example for multiply? request -> query_pairs.put("num1", "1");
     }
     // {{"q", "hello world/me"}, {"bob","5"}}
     return query_pairs;
@@ -283,14 +376,21 @@ class WebServer {
    * @return HTML string output of file list
    */
   public static String buildFileList() {
+
+    //An array list that will contain all the files in a directory
     ArrayList<String> filenames = new ArrayList<>();
 
-    // Creating a File object for directory
+    // Creating a File object for directory start (project level)
     File directoryPath = new File("www/");
+
+    //io.File.list() returns the array of files and directories in the directory defined by this abstract path name.
+    //That array of files and directories is added to the array list
     filenames.addAll(Arrays.asList(directoryPath.list()));
 
+    //Create String of HTML that will contain the proper HTML tags/links with the filenames in the right space
     if (filenames.size() > 0) {
       StringBuilder builder = new StringBuilder();
+      //The <ul> tag defines an unordered (bulleted) list. Use the <ul> tag together with the <li> tag to create unordered lists.
       builder.append("<ul>\n");
       for (var filename : filenames) {
         builder.append("<li>" + filename + "</li>");
@@ -307,22 +407,35 @@ class WebServer {
    * of 512 bytes for efficiency.
    */
   public static byte[] readFileInBytes(File f) throws IOException {
-
+    //file (FileInputStream) -> buffer -> data (ByteArrayOutputStream) -> result
     FileInputStream file = new FileInputStream(f);
     ByteArrayOutputStream data = new ByteArrayOutputStream(file.available());
 
     byte buffer[] = new byte[512];
-    int numRead = file.read(buffer);
-    while (numRead > 0) {
-      data.write(buffer, 0, numRead);
-      numRead = file.read(buffer);
-    }
-    file.close();
 
+    //The 'buffer' will read up to its own size (512 in this code) from the input stream (a file in this case), and
+    // return the length of the bytes read from the file (could be full or partially full).
+    int numRead = file.read(buffer);
+    //file (FileInputStream) -> buffer, save how much was transferred in an int variable
+
+    //confirm your buffer contains bytes that were just read from the file
+    while (numRead > 0) {
+
+      data.write(buffer, 0, numRead);
+      //buffer -> data (ByteArrayOutputStream)
+
+      //read the next 512 bytes from the file (FileInputStream); equivalent to the increment step for a while-loop
+      numRead = file.read(buffer);
+      //file (FileInputStream) -> buffer, save how much was transferred in an int variable
+    }
+    file.close(); //always close the file input stream at end of file
+
+    //convert the output stream of bytes into an array of bytes
     byte[] result = data.toByteArray();
     data.close();
+    //always close the data output stream (from buffer of bytes) once the array of bytes is created
 
-    return result;
+    return result; //return the array of bytes
   }
 
   /**
