@@ -273,6 +273,18 @@ class WebServer {
             builder.append("Content-Type: text/html; charset=utf-8\n");
             builder.append("\n");
             builder.append("Result (using both default values) is: " + (num1 * num2) + "\n");
+          } else if (num1Status && num2Status) {
+            num1 = parseIntOrDefault(query_pairs.get("num1"), 0);
+            num2 = parseIntOrDefault(query_pairs.get("num2"), 0);
+
+            // do math
+            Integer result = num1 * num2;
+
+            // Generate response
+            builder.append("HTTP/1.1 200 OK\n");
+            builder.append("Content-Type: text/html; charset=utf-8\n");
+            builder.append("\n");
+            builder.append("Result is: " + result);
           }
 
 
