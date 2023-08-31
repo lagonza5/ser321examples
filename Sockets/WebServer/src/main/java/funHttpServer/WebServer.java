@@ -128,8 +128,7 @@ class WebServer {
       System.out.println("FINISHED PARSING HEADER\n");
 
       /*
-      The order of the if-else statments that follow
-
+      The order of the if-else statements that follow:
       NULL request
           root page request (with requests explanation)
           /json request
@@ -137,8 +136,9 @@ class WebServer {
           /file/ request
           /multiply? request
           /github? request
+          /convertTo? request
+          /randomInt? request
           BAD request
-
        */
 
       // Generate an appropriate response to the user
@@ -255,7 +255,7 @@ class WebServer {
             num1 = parseIntOrDefault(query_pairs.get("num1"), DEFAULT_VALUE);
             num2 = parseIntOrDefault(query_pairs.get("num2"), DEFAULT_VALUE);
 
-            builder.append("HTTP/1.1 488 Missing Both Parameters\n");
+            builder.append("HTTP/1.1 488 Missing Both Parameters in multiply\n");
             builder.append("Content-Type: text/html; charset=utf-8\n");
             builder.append("\n");
             builder.append("Result (using both default values) is: " + (num1 * num2) + "\n");
@@ -267,7 +267,7 @@ class WebServer {
             Integer result = num1 * num2;
 
             // Generate response
-            builder.append("HTTP/1.1 200 OK\n");
+            builder.append("HTTP/1.1 200 OK, multiply request processed\n");
             builder.append("Content-Type: text/html; charset=utf-8\n");
             builder.append("\n");
             builder.append("Result is: " + result);
@@ -279,13 +279,13 @@ class WebServer {
             Integer result = num1 * num2;
 
             // Generate response
-            builder.append("HTTP/1.1 489 Missing One Parameter\n");
+            builder.append("HTTP/1.1 489 Missing One Parameter in multiply\n");
             builder.append("Content-Type: text/html; charset=utf-8\n");
             builder.append("\n");
             builder.append("Result (with one parameter) is: " + result);
           }
 
-          // TODO: Include error handling here with a correct error code and
+
 
 
         } else if (request.contains("github?")) {
@@ -306,7 +306,7 @@ class WebServer {
           builder.append("Content-Type: text/html; charset=utf-8\n");
           builder.append("\n");
           builder.append("Check the todos mentioned in the Java source file");
-          // TODO: Parse the JSON returned by your fetch and create an appropriatE response based on what the assignment document asks for
+          // TODO: Parse the JSON returned by your fetch and create an appropriate response based on what the assignment document asks for
 
         } else if (request.contains("convertTo?")) {
 
@@ -325,7 +325,7 @@ class WebServer {
           String format;
 
           if (query_pairs.isEmpty()) {
-            builder.append("HTTP/1.1 488 Missing Both Parameters\n");
+            builder.append("HTTP/1.1 488 Missing Both Parameters in convertTo\n");
             builder.append("Content-Type: text/html; charset=utf-8\n");
             builder.append("\n");
             builder.append("Conversion Result (using both default values) is: " + Integer.toBinaryString(DEFAULT_VAL_0) + "\n");
@@ -335,7 +335,7 @@ class WebServer {
             decimalVal = parseIntOrDefault(query_pairs.get("decimal"), DEFAULT_VAL_0);
             format = parseNumberSystem(query_pairs.get("format"));
 
-            builder.append("HTTP/1.1 200 OK\n");
+            builder.append("HTTP/1.1 200 OK, convertTo request processed\n");
             builder.append("Content-Type: text/html; charset=utf-8\n");
             builder.append("\n");
 
@@ -373,7 +373,7 @@ class WebServer {
             min = DEFAULT_MIN;
             max = DEFAULT_MAX;
 
-            builder.append("HTTP/1.1 488 Missing Both Parameters\n");
+            builder.append("HTTP/1.1 488 Missing Both Parameters in randomInt\n");
             builder.append("Content-Type: text/html; charset=utf-8\n");
             builder.append("\n");
             builder.append("Result (using default range: [0 - 100)) is: " + getRandomNumber(min, max) + "\n");
@@ -383,14 +383,14 @@ class WebServer {
             min = parseIntOrDefault(query_pairs.get("min"), DEFAULT_MIN);
             max = parseIntOrDefault(query_pairs.get("max"), DEFAULT_MAX);
 
-            if (max < min) {
-              builder.append("HTTP/1.1 489 Illogical range\n");
+            if (max <= min) {
+              builder.append("HTTP/1.1 489 Illogical range in randomInt\n");
               builder.append("Content-Type: text/html; charset=utf-8\n");
               builder.append("\n");
-              builder.append("min cannot be greater than max.");
+              builder.append("min cannot be greater than or equal to max.");
             } else {
               // Generate response
-              builder.append("HTTP/1.1 200 OK\n");
+              builder.append("HTTP/1.1 200 OK, randomInt request processed\n");
               builder.append("Content-Type: text/html; charset=utf-8\n");
               builder.append("\n");
               builder.append("Result is: " + getRandomNumber(min, max));
@@ -406,12 +406,12 @@ class WebServer {
               //the minimum provided must be less than the default max
               max = DEFAULT_MAX;
               if (max <= min) {
-                builder.append("HTTP/1.1 489 Illogical range\n");
+                builder.append("HTTP/1.1 489 Illogical range in randomInt\n");
                 builder.append("Content-Type: text/html; charset=utf-8\n");
                 builder.append("\n");
                 builder.append("min cannot be greater than or equal to the default max (DEFAULT_MAX = 100)");
               } else {
-                builder.append("HTTP/1.1 200 OK\n");
+                builder.append("HTTP/1.1 200 OK, randomInt request processed\n");
                 builder.append("Content-Type: text/html; charset=utf-8\n");
                 builder.append("\n");
                 builder.append("Result is: " + getRandomNumber(min, max));
@@ -426,12 +426,12 @@ class WebServer {
               //the maximum provided cannot be less than the default min
               min = DEFAULT_MIN;
               if (max <= min) {
-                builder.append("HTTP/1.1 489 Illogical range\n");
+                builder.append("HTTP/1.1 489 Illogical range in randomInt\n");
                 builder.append("Content-Type: text/html; charset=utf-8\n");
                 builder.append("\n");
                 builder.append("max cannot be less than or equal to the default min (DEFAULT_MIN = 0)");
               } else {
-                builder.append("HTTP/1.1 200 OK\n");
+                builder.append("HTTP/1.1 200 OK, randomInt request processed\n");
                 builder.append("Content-Type: text/html; charset=utf-8\n");
                 builder.append("\n");
                 builder.append("Result is: " + getRandomNumber(min, max));
@@ -454,8 +454,6 @@ class WebServer {
       }
     } catch (IOException e) {
       e.printStackTrace();
-      //TODO Are we supposed to print more than the exception stack trace?
-      //My own addition ^
       response = ("<html>ERROR: " + e.getMessage() + "</html>").getBytes();
     }
 
