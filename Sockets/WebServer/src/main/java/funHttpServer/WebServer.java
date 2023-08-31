@@ -28,8 +28,7 @@ import java.nio.charset.Charset;
 //adding a new import, gradle.build has a json dependency
 import org.json.*;
 
-import static java.lang.Integer.MAX_VALUE;
-import static java.lang.Integer.MIN_VALUE;
+
 
 class WebServer {
   public static void main(String args[]) {
@@ -354,8 +353,8 @@ class WebServer {
         } else if (request.contains("randomInt?")) {
 
           Map<String, String> query_pairs = new LinkedHashMap<String, String>();
-          final int DEFAULT_MIN = MIN_VALUE ;
-          final int DEFAULT_MAX = MAX_VALUE;
+          final int DEFAULT_MIN = 0 ;
+          final int DEFAULT_MAX = 100;
 
           // extract path parameters
           query_pairs = splitQuery(request.replace("randomInt?", ""));
@@ -371,8 +370,8 @@ class WebServer {
 
           if (query_pairs.isEmpty()) {
 
-            min = parseIntOrDefault(query_pairs.get("min"), DEFAULT_MIN);
-            max = parseIntOrDefault(query_pairs.get("max"), DEFAULT_MAX);
+            min = DEFAULT_MIN;
+            max = DEFAULT_MAX;
 
             builder.append("HTTP/1.1 488 Missing Both Parameters\n");
             builder.append("Content-Type: text/html; charset=utf-8\n");
@@ -399,19 +398,28 @@ class WebServer {
 
           } else if (minStatus || maxStatus) {
 
-            if (minStatus) {
-              min = parseIntOrDefault(query_pairs.get("min"), DEFAULT_MIN);
-              max = DEFAULT_MAX;
-            } else {
-              max = parseIntOrDefault(query_pairs.get("max"), DEFAULT_MAX);
-              min = DEFAULT_MIN;
-            }
-
             // Generate response
             builder.append("HTTP/1.1 200 OK\n");
             builder.append("Content-Type: text/html; charset=utf-8\n");
             builder.append("\n");
-            builder.append("Result (using 1 default value) is: ").append(getRandomNumber(min, max));
+
+            if (minStatus) {
+              min = parseIntOrDefault(query_pairs.get("min"), DEFAULT_MIN);
+              max = DEFAULT_MAX;
+              if (max < min) {
+                builder.append("min cannot be greater than default max (DEFAULT_MAX = 100)");
+              } else {
+                builder.append("Result is: " + getRandomNumber(min, max));
+              }
+            } else {
+              max = parseIntOrDefault(query_pairs.get("max"), DEFAULT_MAX);
+              min = DEFAULT_MIN;
+              if (max < min) {
+                builder.append("max cannot be less than default min (DEFAULT_MIN = 0)");
+              } else {
+                builder.append("Result is: " + getRandomNumber(min, max));
+              }
+            }
 
           }
 
