@@ -370,10 +370,14 @@ class WebServer {
           Integer max;
 
           if (query_pairs.isEmpty()) {
+
+            min = parseIntOrDefault(query_pairs.get("min"), DEFAULT_MIN);
+            max = parseIntOrDefault(query_pairs.get("max"), DEFAULT_MAX);
+
             builder.append("HTTP/1.1 488 Missing Both Parameters\n");
             builder.append("Content-Type: text/html; charset=utf-8\n");
             builder.append("\n");
-            builder.append("Result (using both default values) is: " + getRandomNumber(DEFAULT_MIN, DEFAULT_MAX) + "\n");
+            builder.append("Result (using both default values) is: " + getRandomNumber(min, max) + "\n");
 
           } else if (minStatus && maxStatus) {
 
