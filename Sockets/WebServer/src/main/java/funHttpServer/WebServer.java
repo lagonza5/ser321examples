@@ -376,7 +376,7 @@ class WebServer {
             builder.append("HTTP/1.1 488 Missing Both Parameters\n");
             builder.append("Content-Type: text/html; charset=utf-8\n");
             builder.append("\n");
-            builder.append("Result (using both default values) is: " + getRandomNumber(min, max) + "\n");
+            builder.append("Result (using default range: [0 - 100)) is: " + getRandomNumber(min, max) + "\n");
 
           } else if (minStatus && maxStatus) {
 
@@ -398,25 +398,42 @@ class WebServer {
 
           } else if (minStatus || maxStatus) {
 
-            // Generate response
-            builder.append("HTTP/1.1 200 OK\n");
-            builder.append("Content-Type: text/html; charset=utf-8\n");
-            builder.append("\n");
-
+            //when only the minimum is provided
             if (minStatus) {
+              //extract the minimum
               min = parseIntOrDefault(query_pairs.get("min"), DEFAULT_MIN);
+              //the minimum provided cannot equal the default max
+              //the minimum provided must be less than the default max
               max = DEFAULT_MAX;
-              if (max < min) {
-                builder.append("min cannot be greater than default max (DEFAULT_MAX = 100)");
+              if (max <= min) {
+                builder.append("HTTP/1.1 489 Illogical range\n");
+                builder.append("Content-Type: text/html; charset=utf-8\n");
+                builder.append("\n");
+                builder.append("min cannot be greater than or equal to the default max (DEFAULT_MAX = 100)");
               } else {
+                builder.append("HTTP/1.1 200 OK\n");
+                builder.append("Content-Type: text/html; charset=utf-8\n");
+                builder.append("\n");
                 builder.append("Result is: " + getRandomNumber(min, max));
               }
             } else {
+              //only the maximum was provided
+
+              //extract the maximum
               max = parseIntOrDefault(query_pairs.get("max"), DEFAULT_MAX);
+
+              //the maximum provided cannot equal the default min
+              //the maximum provided cannot be less than the default min
               min = DEFAULT_MIN;
-              if (max < min) {
-                builder.append("max cannot be less than default min (DEFAULT_MIN = 0)");
+              if (max <= min) {
+                builder.append("HTTP/1.1 489 Illogical range\n");
+                builder.append("Content-Type: text/html; charset=utf-8\n");
+                builder.append("\n");
+                builder.append("max cannot be less than or equal to the default min (DEFAULT_MIN = 0)");
               } else {
+                builder.append("HTTP/1.1 200 OK\n");
+                builder.append("Content-Type: text/html; charset=utf-8\n");
+                builder.append("\n");
                 builder.append("Result is: " + getRandomNumber(min, max));
               }
             }
