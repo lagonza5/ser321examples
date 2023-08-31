@@ -28,6 +28,9 @@ import java.nio.charset.Charset;
 //adding a new import, gradle.build has a json dependency
 import org.json.*;
 
+import static java.lang.Integer.MAX_VALUE;
+import static java.lang.Integer.MIN_VALUE;
+
 class WebServer {
   public static void main(String args[]) {
 
@@ -348,6 +351,66 @@ class WebServer {
               builder.append("Result (in octal): " + conversion);
             }
           }
+        } else if (request.contains("randomInt?")) {
+
+          Map<String, String> query_pairs = new LinkedHashMap<String, String>();
+          final int DEFAULT_MIN = MIN_VALUE ;
+          final int DEFAULT_MAX = MAX_VALUE;
+
+          // extract path parameters
+          query_pairs = splitQuery(request.replace("randomInt?", ""));
+          // example return -> {{"min", "1"}, {"max","2"}} if they are provided of course...
+
+          //Check if the LinkedHashMap was able to extract the parameters
+          boolean minStatus = query_pairs.containsKey("min");
+          boolean maxStatus = query_pairs.containsKey("max");
+
+          //The values that will be used as the range
+          Integer min;
+          Integer max;
+
+          if (query_pairs.isEmpty()) {
+            builder.append("HTTP/1.1 488 Missing Both Parameters\n");
+            builder.append("Content-Type: text/html; charset=utf-8\n");
+            builder.append("\n");
+            builder.append("Result (using both default values) is: " + getRandomNumber(DEFAULT_MIN, DEFAULT_MAX) + "\n");
+
+          } else if (minStatus && maxStatus) {
+
+            min = parseIntOrDefault(query_pairs.get("min"), DEFAULT_MIN);
+            max = parseIntOrDefault(query_pairs.get("max"), DEFAULT_MAX);
+
+            if (max < min) {
+              builder.append("HTTP/1.1 489 Illogical range\n");
+              builder.append("Content-Type: text/html; charset=utf-8\n");
+              builder.append("\n");
+              builder.append("min cannot be greater than max.");
+            } else {
+              // Generate response
+              builder.append("HTTP/1.1 200 OK\n");
+              builder.append("Content-Type: text/html; charset=utf-8\n");
+              builder.append("\n");
+              builder.append("Result is: " + getRandomNumber(min, max));
+            }
+
+          } else if (minStatus || maxStatus) {
+
+            if (minStatus) {
+              min = parseIntOrDefault(query_pairs.get("min"), DEFAULT_MIN);
+              max = DEFAULT_MAX;
+            } else {
+              max = parseIntOrDefault(query_pairs.get("max"), DEFAULT_MAX);
+              min = DEFAULT_MIN;
+            }
+
+            // Generate response
+            builder.append("HTTP/1.1 200 OK\n");
+            builder.append("Content-Type: text/html; charset=utf-8\n");
+            builder.append("\n");
+            builder.append("Result (using 1 default value) is: ").append(getRandomNumber(min, max));
+
+          }
+
         } else {
           // if the request is not recognized at all
 
@@ -369,6 +432,15 @@ class WebServer {
 
     return response;
   }
+
+  /**
+   *
+   */
+  public int getRandomNumber(int min, int max) {
+    Random random = new Random();
+    return random.nextInt(max - min) + min;
+  }
+
 
   /**
    * Method to read in a String the represents binary, hex, or octal
