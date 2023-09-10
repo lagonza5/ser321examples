@@ -28,17 +28,17 @@ class FirstThread {
       int times = 5; // default repeat count
       int sleepDelay = 5; // default sleep delay
       try {
-            times = Integer.parseInt(args[0]);
-            sleepDelay = Integer.parseInt(args[1]);
-        } catch (NumberFormatException nfe) {
-            System.out.println("[repeat|sleep] must be integer");
-            System.exit(2);
-        }
-        
-        for (int loop = 0; loop < times; loop++) {
-            Runnable worker = new Worker425(loop, sleepDelay*loop);
-            Thread task = new Thread(worker, "Task#"+loop);
-            task.start();
-        }
+          times = Integer.parseInt(args[0]);
+          sleepDelay = Integer.parseInt(args[1]);
+      } catch (NumberFormatException nfe) {
+          System.out.println("[repeat|sleep] must be integer");
+          System.exit(2);
+      }
+
+      for (int loop = 0; loop < times; loop++) {
+          Runnable worker = new Worker425(loop, sleepDelay*loop);
+          Thread task = new Thread(worker, "Task#"+loop);
+          task.start();
+      }
     }
 }
