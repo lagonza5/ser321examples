@@ -60,9 +60,9 @@ public class Client {
 
       Scanner input = new Scanner(System.in);
       int choice;
-      System.out.println("Please select a valid option (1-5). 0 to diconnect the client");
+      System.out.println("Please select a valid option (1-5). 0 to disconnect the client");
       do {
-        choice = input.nextInt(); // what if not int.. shoudl error handle this
+        choice = input.nextInt(); // what if not int.. should error handle this
         JSONObject request = null;
         switch (choice) {
         case (1):
