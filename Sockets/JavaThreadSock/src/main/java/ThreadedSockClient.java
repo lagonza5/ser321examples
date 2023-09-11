@@ -45,7 +45,7 @@ class ThreadedSockClient {
 
       // process loop to read and echo every word sent from the server
       while (true) {
-        // send the token(will be verified for being a single digit(number)
+        // send the token (will be verified for being a single digit(number)
         os.writeObject(inStr);
         // exit process loop if token was "end"
         if (inStr.equals("end")) {

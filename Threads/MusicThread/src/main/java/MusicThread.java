@@ -11,7 +11,7 @@ import javax.sound.sampled.*; //api classes to play wav file
 
 /**
 
- * Purpose: demonstrate the use of a thread to provide interruptable background
+ * Purpose: demonstrate the use of a thread to provide uninterruptible background
  * playing of a wav file. To make this example work, there must be a wav
  * file in the project directory whose name matches the user-selected node
  * in the JTree. Select the tree node (example ComeMonday) then select
@@ -19,7 +19,7 @@ import javax.sound.sampled.*; //api classes to play wav file
  * project directory. Notice you can select a new node and then play to
  * move to a new song. Or, select Play again to restart from the beginning
  * of the current song.
- * You can generate a wav file for your an mp3 using the web site:
+ * You can generate a wav file for your mp3 using the website:
  *      http://audio.online-convert.com/convert-to-wav
  *
  * <p>

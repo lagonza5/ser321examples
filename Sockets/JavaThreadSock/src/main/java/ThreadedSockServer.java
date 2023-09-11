@@ -24,18 +24,25 @@ public class ThreadedSockServer extends Thread {
       "If the timer has expired, the thread continues", "This call can cause some overhead in programs",
       "Notify signals a waiting thread to wake up", "Wait blocks the thread and releases the lock" };
 
+  /**
+   * This server must be able to handle multiple client requests concurrently
+   * It will hang on to the socket connection (and ID) for every client
+   * @param sock
+   * @param id
+   */
   public ThreadedSockServer(Socket sock, int id) {
     this.conn = sock;
     this.id = id;
   }
 
+  //This is a connection-oriented program (socket connection will remain open)
   public void run() {
     try {
-      // setup read/write channels for connection
+      // setup read/write channels for connection (serialized object input/output)
       ObjectInputStream in = new ObjectInputStream(conn.getInputStream());
       ObjectOutputStream out = new ObjectOutputStream(conn.getOutputStream());
 
-      // read the digit being send
+      // read the digit being sent
       String s = (String) in.readObject();
       int index;
       // while client hasn't ended
@@ -78,7 +85,7 @@ public class ThreadedSockServer extends Thread {
   }
 
   public static void main(String args[]) throws IOException {
-    Socket sock = null;
+    Socket sock = null; //The socket reference that will be used to spawn every new socket for every new client request
     int id = 0;
     try {
       if (args.length != 1) {
@@ -88,12 +95,13 @@ public class ThreadedSockServer extends Thread {
       int portNo = Integer.parseInt(args[0]);
       if (portNo <= 1024)
         portNo = 8888;
-      ServerSocket serv = new ServerSocket(portNo);
+      ServerSocket serv = new ServerSocket(portNo); //The server socket
+      //Servers conceptually run forever, This is the main thread of the server
       while (true) {
         System.out.println("Threaded server waiting for connects on port " + portNo);
-        sock = serv.accept();
+        sock = serv.accept(); //From the server socket, we get a regular client socket back
         System.out.println("Threaded server connected to client-" + id);
-        // create thread
+        // create thread using the spawned client socket and client ID
         ThreadedSockServer myServerThread = new ThreadedSockServer(sock, id++);
         // run thread and don't care about managing it
         myServerThread.start();
