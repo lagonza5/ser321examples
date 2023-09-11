@@ -12,7 +12,8 @@ class Account {
 			t.printStackTrace();
 		}
 		numTransactions++;
-		System.out.println("Balance (deposit): " + balance + ", num: " + numTransactions); // prints the balanace after the transactions
+		System.out.println("Balance (deposit): " + balance + ", num: " + numTransactions);
+		// prints the balance after the transactions
 	}
 
 	public synchronized void withdraw(int amount) {
@@ -35,7 +36,7 @@ class Account {
 	}
 
 	// method that gets both balance and numTransactions since getting them separately might still seem like an inconsistent state
-	public synchronized String getBoth(){ 
+	public synchronized String getBoth(){
 		return ("Synch:"+ balance + " " + numTransactions);
 	}
 }
