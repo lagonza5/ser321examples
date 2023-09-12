@@ -38,7 +38,7 @@ public class ThreadedSockServer extends Thread {
   //This is a connection-oriented program (socket connection will remain open)
   public void run() {
     try {
-      // setup read/write channels for connection (serialized object input/output)
+      // setup read/write channels for connection (serialized object input/output) using Java.String
       ObjectInputStream in = new ObjectInputStream(conn.getInputStream());
       ObjectOutputStream out = new ObjectOutputStream(conn.getOutputStream());
 

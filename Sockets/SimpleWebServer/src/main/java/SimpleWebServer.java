@@ -7,13 +7,16 @@ public class SimpleWebServer {
     // 
     public static void main(String args[]) {
         int port = 9099; // default port
+
         if (args.length != 1) {
 
             System.out.println("Expected arguments: <port(int)>");
             System.exit(1);
         }
+
         System.out.println("running");
-try {
+
+        try {
             port = Integer.parseInt(args[0]);
         } catch (NumberFormatException nfe) {
             System.out.println("[Port] must be integer");
@@ -153,8 +156,7 @@ class ClientHandler implements Runnable {
      * Read bytes from a file and return them in the byte array. We read in
      * blocks of 512 bytes for efficiency.
      */
-    public static byte[] readFileInBytes(File f)
-            throws IOException {
+    public static byte[] readFileInBytes(File f) throws IOException {
 
         byte[] result = new byte[(int) f.length()];
 

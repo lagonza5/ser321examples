@@ -46,15 +46,16 @@ class SynchExample extends Thread {
 	int id;
 
 	public SynchExample(int id, Account account) {
-		super("Transaction #" + id);
+		super("Transaction #" + id); //the thread name as argument
 		this.account = account;
 		this.id = id;
 	}
 
+	//only performs deposits
 	public void run() {
 		System.out.println("Transaction started #" + id);
 		for (int i = 1; i <= 3; i++) {
-			account.deposit(id*i);
+			account.deposit(id*i); //thread 1 will deposit 1, then 2, then 3 dollars... thread 2 will deposit 2, then 4, then 6 dollars... etc.
 			// deposit done
 			System.out.println("Back from deposit in thread " + id);
 		}
@@ -82,7 +83,7 @@ class SynchExample extends Thread {
 			trans.start(); // start new thread
 		}
 		// All trans done
-		Thread.sleep(sleepDelay);                                                                // if sleep is too short the balance will be printed before threads are done
+		Thread.sleep(sleepDelay); // if sleep is too short the balance will be printed before threads are done
 		System.out.println("Balance is " + account.getBalance() + " from " + account.getNumberOfTransactions() + " transactions");
 	}
 }
@@ -153,7 +154,7 @@ class SynchExample3 extends Thread {
 		System.out.println(account.getBoth());
 		
 		// All trans done
-		Thread.sleep(sleepDelay);                                                                // if sleep is too short the balance will be printed before threads are done
+		Thread.sleep(sleepDelay);  // if sleep is too short the balance will be printed before threads are done
 		System.out.println("Balance is " + account.getBalance() + " from " + account.getNumberOfTransactions() + " transactions");
 	}
 }

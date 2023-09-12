@@ -6,9 +6,9 @@ import java.io.*;
 /**
  * 
  * Purpose: A threaded server providing download service for the Serialized
- * Group The server waits for clients to connect and requiest to download the
+ * Group The server waits for clients to connect and request to download the
  * file admin.ser (must execute: ant execute, prior to running server). The
- * clients requests the file by sending a "filetoclient^" string to the server.
+ * clients request the file by sending a "filetoclient^" string to the server.
  * The server responds by reading admin.ser and then sending the client a
  * message indicating how many bytes to expect in the transmission of the file.
  * The client responds OK, and the server sends the file's bytes. after the
