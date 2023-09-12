@@ -38,12 +38,14 @@ class SockBaseClient {
         // read JSON data from the file
         JSONObject data = null;
         try {
-          data = readJson(filename);
-          op = generateObjectFromPB(data);
+            //the json file contains the numbers to add and their numerical base
+            data = readJson(filename);
+            //the data is in json format and must be converted to a java object using the protobuf protocol
+            op = generateObjectFromPB(data);
         } catch (IOException ex) {
-          ex.printStackTrace();
+            ex.printStackTrace();
         } catch (JSONException ex) {
-          ex.printStackTrace();
+            ex.printStackTrace();
         }
 
         try {
@@ -52,13 +54,18 @@ class SockBaseClient {
 
             // write to the server
             out = serverSock.getOutputStream();
+            //the protobuf 'Operation' object is sent out to the server using an 'OutputStream' object
             op.writeDelimitedTo(out);
 
             // read from the server
             in = serverSock.getInputStream();
+
+            //the server sends a reply to this client as a protobuf 'Response' object
+            //read the proto object and put into new object (template from file response.proto and its definitions)
             Response response = Response.parseDelimitedFrom(in);
 
             System.out.println("Result is " + response.getResultString());
+
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -70,9 +77,7 @@ class SockBaseClient {
 
     private static JSONObject readJson(String filename) throws IOException, JSONException {
       // read json from build directory, so the getResource is needed
-      File file = new File(
-        SockBaseClient.class.getResource("/"+filename).getFile()
-      );
+      File file = new File(SockBaseClient.class.getResource("/"+filename).getFile());
       Reader reader = new FileReader(file);
       JSONTokener jsonTokener = new JSONTokener(reader);
       return new JSONObject(jsonTokener);
