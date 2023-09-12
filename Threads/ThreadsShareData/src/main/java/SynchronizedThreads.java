@@ -18,7 +18,7 @@ public class SynchronizedThreads {
         }
 
         int threads = 5; // default thread count
-        int sleepDelay = 5; // default sleep delay
+        int sleepDelay = 50; // default sleep delay
 
         try {
           // start up the given number of threads in this program
@@ -70,7 +70,7 @@ class AThread extends Thread {
         try {
 
             for (int count = 0; count < 3; count++) {
-                System.out.println("delay thread #: "+id);
+                //System.out.println("delay thread #: "+id);
                 if (id==1 && count>0) {
                     sleep(sleepDelay); //delay the first thread
                     System.out.println("thread #: "+id+" delayed");
@@ -97,9 +97,6 @@ class AThread extends Thread {
 }
 
 class ShareableData {
-    public int getMyData() {
-        return myData;
-    }
 
     private int myData;
 
@@ -115,4 +112,9 @@ class ShareableData {
         myData = myData + 1;
 	    System.out.println("Shareable data with value " + myData + " changed  by thread " + who + " count is " + count);
     }
+
+    public int getMyData() {
+        return myData;
+    }
+
 }

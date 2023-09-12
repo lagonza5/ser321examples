@@ -19,33 +19,52 @@ class EchoClient {
    
    public static void main (String args[]) {
       Socket sock = null;
+
       if (args.length != 2) {
-         System.out.println("Usage: java ser321.sockets.EchoClient hostName "+
-                            "portNumber");
+         System.out.println("Usage: java ser321.sockets.EchoClient hostName "+ "portNumber");
          System.exit(0);
       }
+
       String host = args[0];
+
       int portNo = Integer.parseInt(args[1]);
+
       try {
          sock = new Socket(host, portNo);
+
          BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
+
          System.out.print("String to send>");
          String strToSend = stdin.readLine();
+
          String strReceived;
+
          OutputStream os = sock.getOutputStream();
          InputStream is = sock.getInputStream();
+
          int numBytesReceived;
          byte bytesReceived[] = new byte[bufLen];
-         while (!strToSend.equalsIgnoreCase("end")){
+
+         while (!strToSend.equalsIgnoreCase("end")) {
+
             byte bytesToSend[] = strToSend.getBytes();
             os.write(bytesToSend,0,bytesToSend.length);
+
             numBytesReceived = is.read(bytesReceived,0,bufLen);
             strReceived = new String(bytesReceived,0,numBytesReceived);
             System.out.println("Received from server: "+strReceived);
+
             System.out.print("String to send>");
             strToSend = stdin.readLine();
+
          }
+
          sock.close();
-      } catch (Exception e) {e.printStackTrace();}
+
+      } catch (Exception e) {
+         e.printStackTrace();
+      }
+
    }
+
 }

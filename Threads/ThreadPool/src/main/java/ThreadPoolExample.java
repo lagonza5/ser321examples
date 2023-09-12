@@ -26,13 +26,16 @@ class Worker implements Runnable {
 
 public class ThreadPoolExample {
     public static void main(String args[]) throws Exception {
+
         if (args.length != 3) {
           System.out.println("Expected Arguments: <workers(int)> <sleep(int)> <loop count(int)>");
           System.exit(0);
         }
+
         int sleepDelay = 10; // default value
         int numWorkers = 25; // default value
         int loopCount = 5; // default value
+
         try {
             numWorkers = Integer.parseInt(args[0]);
             sleepDelay = Integer.parseInt(args[1]);
@@ -41,9 +44,11 @@ public class ThreadPoolExample {
             System.out.println("[workers|sleep|loop count] must be integer");
             System.exit(0);
         }
+
         if (numWorkers < 6) {
           numWorkers = 6;
         }
+
         int poolSize = numWorkers - 5;
 
         // lower thread pool than numWorkers;
@@ -52,5 +57,7 @@ public class ThreadPoolExample {
         for (int i=0; i < numWorkers; i++) {
             pool.execute(new Worker(i, sleepDelay, loopCount)); 
         }
+
     }
+
 }
