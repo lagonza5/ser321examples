@@ -72,10 +72,10 @@ class SockBaseServer {
 
                 if (operation == Operations.ADD) {
                   result = base.add(num1, num2, baseN);
-		  System.out.println("base " + baseN + ": " + num1 + " + " + num2 + " = " + result);
+		          System.out.println("base " + baseN + ": " + num1 + " + " + num2 + " = " + result);
                 } else if (operation == Operations.SUB) {
                   result = base.substract(num1, num2, baseN);
-		  System.out.println("base " + baseN + ": " + num1 + " - " + num2 + " = " + result);
+		          System.out.println("base " + baseN + ": " + num1 + " - " + num2 + " = " + result);
                 }
 
                 if (response == Response.JSON){

@@ -30,24 +30,25 @@ public class GroupFileSerialize {
       System.out.println("Server ready and waiting to export a group");
 
       File outFile = new File("admin.ser");
-      ObjectOutputStream os = 
-                         new ObjectOutputStream(new FileOutputStream(outFile));
+      ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(outFile));
       os.writeObject(admin);
       os.flush();
       os.close(); //no need in Java to close the File outFiel (not a closeable object).
       System.out.println("Server done exporting a group");
 
       File inFile = new File("admin.ser");
-      ObjectInputStream in =
-                            new ObjectInputStream(new FileInputStream(inFile));
+      ObjectInputStream in = new ObjectInputStream(new FileInputStream(inFile));
       Group g = (GroupImpl)in.readObject();
       System.out.println("Group "+g.getName()+" received. Includes:");
+
       Vector<String> users = g.getUserNames();
       for (Enumeration e = users.elements(); e.hasMoreElements() ;) {
         System.out.println((String)e.nextElement());
       }
+
       in.close();
-    }catch(Exception e) {
+
+    } catch(Exception e) {
       e.printStackTrace();
     }
   }

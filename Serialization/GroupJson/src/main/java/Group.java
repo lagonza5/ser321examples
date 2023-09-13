@@ -17,7 +17,7 @@ import java.io.Serializable;
  * @file    Group.java
  * @date    January, 2020
  */
-public class Group extends Object implements JSONString, Serializable {
+public class Group implements JSONString, Serializable {
 
    // Serial version UID is defined below. Its only needed if you want
    // to make changes to the class and still deserialize artifacts
@@ -56,6 +56,7 @@ public class Group extends Object implements JSONString, Serializable {
       }
    }
 
+   @Override
    public String toJSONString(){
       String ret;
       JSONObject obj = new JSONObject();
@@ -73,7 +74,7 @@ public class Group extends Object implements JSONString, Serializable {
       return name;
    }
 
-   public void setName(String aName){
+   public void setName(String aName) {
       name = aName;
    }
 

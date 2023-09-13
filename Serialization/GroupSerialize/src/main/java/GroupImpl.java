@@ -30,13 +30,12 @@ public class GroupImpl implements Group, Serializable {
    public void saveToFile(){
       try{
          File outFile = new File("users.ser");
-         ObjectOutputStream os =
-            new ObjectOutputStream(new FileOutputStream(outFile));
+         ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(outFile));
          os.writeObject(users);
          os.flush();
          os.close();
          System.out.println("users serialized to users.ser");
-      }catch(Exception ex){
+      } catch(Exception ex) {
          System.out.println("Serialize vector of user failed: "+ex.getMessage());
       }
    }

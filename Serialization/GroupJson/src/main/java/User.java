@@ -11,7 +11,7 @@ import org.json.JSONObject;
  * @file    User.java
  * @date    January, 2020
  */
-class User extends Object implements Serializable {
+class User implements Serializable {
 
    // Serial version UID is defined below. Its only needed if you want
    // to make changes to the class and still deserialize artifacts
